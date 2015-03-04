@@ -1,6 +1,21 @@
 var Git = require('../lib/git');
 var http = require('http');
 
+var git = new Git({
+	auth : function(username, password, callback) {
+
+		for (var i = 0,
+		    j = users.length; i < j; i++) {
+
+			if (users[i].username == username && users[i].password == password) {
+				return callback(null, users[i]);
+			}
+
+		};
+		callback(401);
+	}
+});
+
 var demo = {
 	username : 'demo',
 	password : 'demo'
@@ -16,7 +31,7 @@ var users = [demo, bob];
 var repos = {
 	falafel : {
 		name : 'falafel',
-		org : 'bob',
+		organization : 'bob',
 		url : 'http://localhost:5000/bob/falafel.git',
 		users : [{
 			user : demo,
@@ -33,34 +48,10 @@ var repos = {
 		}]
 	}
 };
+Object.keys(repos).forEach(function(key) {
+	git.create(repos[key].organization, repos[key].name, function() {
 
-var git = new Git({
-	auth : function(username, password, callback) {
-
-		for (var i = 0,
-		    j = users.length; i < j; i++) {
-
-			if (users[i].username == username && users[i].password == password) {
-				return callback(null, users[i]);
-			}
-
-		};
-		callback(401);
-	}
-});
-git.on('push', function(push) {
-	console.log('push');
-
-	push.service.sideband.end();
-});
-git.on('info', function(push) {
-	console.log('info');
-});
-git.on('pull', function(push) {
-	console.log('pull');
-});
-git.on('tag', function(push) {
-	console.log('tag');
+	});
 });
 /**
  *
@@ -68,23 +59,25 @@ git.on('tag', function(push) {
  *
  */
 
-git.on('auth', function(info, cb) {
-	console.log('auth', info);
-	var repo = repos[info.name];
-
+git.perm(function(repo) {
+	var info = repos[repo.name];
 	for (var i = 0,
-	    j = repo.users.length; i < j; i++) {
-		if (repo.users[i].user.username == info.creds.username) {
-			if (repo.users[i].permissions.write == info.write) {
-				return cb(null, true);
+	    j = info.users.length; i < j; i++) {
+		if (info.users[i].user.username == repo.credentials.username) {
+			if (info.users[i].permissions.write == repo.write) {
+				return repo.accept();
 			}
-			if (repo.users[i].permissions.read == info.read) {
-				return cb(null, true);
+			if (info.users[i].permissions.read == repo.read) {
+				return repo.accept();
 			}
 		}
-
 	};
-	cb(null, false);
+	repo.reject();
+});
+
+git.on('sideband', function(repo) {
+	console.log('sideband', repo);
+	repo.sideband.end('all good\n');
 
 });
-http.createServer(git.handle.bind(git)).listen(process.env.PORT || 5000);
+http.createServer(git.handle.bind(git)).listen(process.env.PORT || 9001);
