@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "basic": "0.0.3",
-    "debug": "2.1.1",
+    "debug": "4.1.1",
     "pushover-giting": "0.0.x",
     "mkdirp": "0.5.0"
   },
