@@ -1,23 +1,29 @@
 {
-  "name": "giting",
-  "version": "0.0.2",
-  "description": "Git server",
-  "main": "./lib/git.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MangoRaft/git.git"
+  "author": {
+    "name": "Tim",
+    "email": "mangoraft@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/MangoRaft/git/issues"
   },
   "dependencies": {
     "basic": "0.0.3",
     "debug": "4.1.1",
-    "pushover-giting": "0.0.x",
-    "mkdirp": "0.5.0"
+    "mkdirp": "0.5.0",
+    "pushover-giting": "0.0.x"
   },
+  "description": "Git server",
+  "homepage": "https://github.com/MangoRaft/git",
   "keywords": [
     "git",
     "server"
   ],
-  "homepage": "https://github.com/MangoRaft/git",
-  "author": "Tim <mangoraft@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "main": "./lib/git.js",
+  "name": "giting",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MangoRaft/git.git"
+  },
+  "version": "0.0.8"
 }
